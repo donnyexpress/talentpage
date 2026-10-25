@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATELIER PROPORTION — Editorial Comp-Card & Blueprint Database</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            rose: {
+              500: '#f43f5e',
+              600: '#e11d48',
+              950: '#4c0519',
+            },
+            slate: {
+              850: '#111827',
+              925: '#0b0f19',
+              950: '#070a11',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-rose-500 selection:text-white">
+
+  <!-- TOP BRANDING & NAVIGATION -->
+  <header class="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between py-3">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 p-0.5 shadow-lg shadow-rose-950/50">
+          <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+            <i data-lucide="scan-face" class="w-5 h-5 text-rose-500"></i>
+          </div>
+        </div>
+        <div>
+          <span class="text-xs uppercase tracking-widest text-rose-500 font-mono-code font-bold block">Editorial Studio Archive</span>
+          <h1 class="text-xl font-extrabold text-white tracking-tight font-editorial">ATELIER PROPORTION</h1>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="hidden md:flex items-center space-x-1 bg-slate-900/80 p-1 rounded-xl border border-slate-800">
+        <button 
+          data-view-target="catalog" 
+          class="px-4 py-2 text-sm font-semibold rounded-lg text-rose-500 transition flex items-center space-x-2"
+        >
+          <i data-lucide="layout-grid" class="w-4 h-4"></i>
+          <span>Talent Archive</span>
+        </button>
+        <button 
+          data-view-target="studio" 
+          class="px-4 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition flex items-center space-x-2"
+        >
+          <i data-lucide="crosshair" class="w-4 h-4"></i>
+          <span>Blueprint Studio</span>
+        </button>
+        <button 
+          data-view-target="spec-sheet" 
+          class="px-4 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition flex items-center space-x-2"
+        >
+          <i data-lucide="table" class="w-4 h-4"></i>
+          <span>Specs Ledger</span>
+        </button>
+      </nav>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center space-x-3">
+        <button 
+          onclick="document.getElementById('add-talent-modal').classList.remove('hidden')"
+          class="px-3.5 py-2 text-xs font-bold rounded-lg bg-rose-600 hover:bg-rose-500 text-white flex items-center space-x-1.5 transition shadow-lg shadow-rose-950/50"
+        >
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Add Comp-Card</span>
+        </button>
+        <button 
+          onclick="window.print()" 
+          class="p-2 text-slate-400 hover:text-white bg-slate-900 rounded-lg border border-slate-800 transition no-print"
+          title="Print or Export PDF"
+        >
+          <i data-lucide="printer" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- KPI / STATS BANNER -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4 no-print">
+      <div class="glass-card p-4 rounded-xl border border-slate-800/80">
+        <div class="text-xs uppercase text-slate-400 font-mono-code mb-1">Archived Talents</div>
+        <div id="stat-total-models" class="text-3xl font-extrabold text-white font-editorial">6</div>
+        <div class="text-[11px] text-slate-500 mt-1">Verified Editorial & Runway</div>
+      </div>
+      <div class="glass-card p-4 rounded-xl border border-slate-800/80">
+        <div class="text-xs uppercase text-slate-400 font-mono-code mb-1">Baseline Stature</div>
+        <div class="text-3xl font-extrabold text-rose-400 font-editorial">&gt; 165 cm</div>
+        <div class="text-[11px] text-slate-500 mt-1">Tall Silhouette Standard</div>
+      </div>
+      <div class="glass-card p-4 rounded-xl border border-slate-800/80">
+        <div class="text-xs uppercase text-slate-400 font-mono-code mb-1">Average Stature</div>
+        <div id="stat-avg-height" class="text-3xl font-extrabold text-white font-editorial">172 cm</div>
+        <div class="text-[11px] text-slate-500 mt-1">Limb Elongation 1:1.63</div>
+      </div>
+      <div class="glass-card p-4 rounded-xl border border-slate-800/80">
+        <div class="text-xs uppercase text-slate-400 font-mono-code mb-1">Peak Stature Record</div>
+        <div id="stat-tallest" class="text-3xl font-extrabold text-amber-400 font-editorial">176 cm</div>
+        <div class="text-[11px] text-slate-500 mt-1">Proportion: 8.5 Heads</div>
+      </div>
+    </section>
+
+    <!-- SECTION 1: CATALOG SHOWCASE -->
+    <section id="catalog-section" class="view-section space-y-6">
+      
+      <!-- CONTROLS & FILTER BAR -->
+      <div class="glass-panel p-5 rounded-2xl border border-slate-800 space-y-4 no-print">
+        
+        <!-- Search and Height Slider -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+          
+          <!-- Search Box -->
+          <div class="md:col-span-5 relative">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+            <input 
+              id="search-input"
+              type="text" 
+              placeholder="Search by model name, Kanji, or agency..." 
+              class="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-rose-500 transition"
+            />
+          </div>
+
+          <!-- Stature Filter Slider -->
+          <div class="md:col-span-4 bg-slate-900/60 p-2.5 px-4 rounded-xl border border-slate-800 flex items-center space-x-3">
+            <span class="text-xs font-mono-code text-slate-400 whitespace-nowrap">Stature:</span>
+            <input 
+              id="height-range" 
+              type="range" 
+              min="165" 
+              max="178" 
+              value="165" 
+              step="1"
+              class="w-full accent-rose-500 cursor-pointer"
+            />
+            <span id="height-display" class="text-xs font-mono-code font-bold text-rose-400 whitespace-nowrap">≥ 165 cm</span>
+          </div>
+
+          <!-- Sort Select -->
+          <div class="md:col-span-3">
+            <select 
+              id="sort-select"
+              class="w-full py-2.5 px-3 bg-slate-900 border border-slate-800 rounded-xl text-sm text-slate-200 focus:outline-none focus:border-rose-500 transition font-mono-code"
+            >
+              <option value="height-desc">Sort: Tallest First (cm)</option>
+              <option value="height-asc">Sort: Stature Ascending</option>
+              <option value="head-ratio-desc">Sort: Head Ratio (Heads)</option>
+              <option value="name-asc">Sort: Name (A-Z)</option>
+            </select>
+          </div>
+
+        </div>
+
+        <!-- Aesthetic Filter Pills -->
+        <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-800/60">
+          <span class="text-xs font-mono-code text-slate-500 mr-2">Aesthetic Tags:</span>
+          <button class="filter-pill active px-3 py-1 rounded-full text-xs font-medium bg-rose-600 text-white transition" data-aesthetic="all">All Styles</button>
+          <button class="filter-pill px-3 py-1 rounded-full text-xs font-medium bg-slate-900 text-slate-300 hover:bg-slate-800 transition" data-aesthetic="Avant-Garde">Avant-Garde</button>
+          <button class="filter-pill px-3 py-1 rounded-full text-xs font-medium bg-slate-900 text-slate-300 hover:bg-slate-800 transition" data-aesthetic="Cyberpunk Chic">Cyberpunk Chic</button>
+          <button class="filter-pill px-3 py-1 rounded-full text-xs font-medium bg-slate-900 text-slate-300 hover:bg-slate-800 transition" data-aesthetic="Runway Tall">Runway Tall</button>
+          <button class="filter-pill px-3 py-1 rounded-full text-xs font-medium bg-slate-900 text-slate-300 hover:bg-slate-800 transition" data-aesthetic="High Fashion">High Fashion</button>
+          <button class="filter-pill px-3 py-1 rounded-full text-xs font-medium bg-slate-900 text-slate-300 hover:bg-slate-800 transition" data-aesthetic="Minimalist">Minimalist</button>
+          <button class="filter-pill px-3 py-1 rounded-full text-xs font-medium bg-slate-900 text-slate-300 hover:bg-slate-800 transition" data-aesthetic="Streetwear">Streetwear</button>
+        </div>
+      </div>
+
+      <!-- Header with Count -->
+      <div class="flex items-center justify-between">
+        <h2 id="catalog-count" class="text-lg font-bold text-white font-editorial tracking-wide">
+          6 Models & Talents
+        </h2>
+        <span class="text-xs font-mono-code text-slate-500">Live Verified Measurement Records</span>
+      </div>
+
+      <!-- CARDS GRID -->
+      <div id="talent-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </section>
+
+    <!-- SECTION 2: BLUEPRINT & REFERENCE STUDIO -->
+    <section id="studio-section" class="view-section hidden space-y-6">
+      <div class="glass-panel p-6 rounded-2xl border border-slate-800">
+        
+        <!-- Studio Header -->
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between pb-6 border-b border-slate-800 gap-4">
+          <div>
+            <div class="text-xs uppercase tracking-widest text-rose-500 font-mono-code mb-1">Orthographic Character & Talent Workbench</div>
+            <h2 id="studio-talent-title" class="text-2xl font-extrabold text-white font-editorial">
+              Rin Hoshizaki (174 cm) — Blueprint Reference Board
+            </h2>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button 
+              id="toggle-overlay-btn"
+              class="px-3 py-1.5 rounded-lg text-xs font-mono-code font-bold bg-rose-600 text-white flex items-center space-x-1.5 transition"
+            >
+              <i data-lucide="grid" class="w-3.5 h-3.5"></i>
+              <span>8-Head Proportion Grid</span>
+            </button>
+            <button 
+              onclick="window.print()"
+              class="px-3 py-1.5 rounded-lg text-xs font-mono-code bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center space-x-1.5 transition"
+            >
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+              <span>Export Card</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Reference 4-Slot Viewport -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+          
+          <!-- Slot 1: Front Craniofacial -->
+          <div class="relative bg-slate-900 rounded-xl overflow-hidden border border-slate-800 aspect-[3/4] group">
+            <div class="absolute top-2 left-2 z-20 bg-slate-950/80 px-2 py-0.5 rounded text-[10px] font-mono-code text-rose-400">
+              01 // CRANIOFACIAL FRONT
+            </div>
+            <img id="studio-slot-front" src="" class="w-full h-full object-cover object-top" />
+            
+            <!-- Proportion Guide Overlay -->
+            <div class="studio-overlay-guide absolute inset-0 pointer-events-none border-t border-b border-rose-500/30 flex flex-col justify-between p-2">
+              <div class="border-b border-dashed border-rose-500/40 text-[9px] font-mono-code text-rose-400 text-right">Head Top</div>
+              <div class="border-b border-dashed border-amber-500/40 text-[9px] font-mono-code text-amber-400 text-right">Eye Axis (50%)</div>
+              <div class="border-b border-dashed border-rose-500/40 text-[9px] font-mono-code text-rose-400 text-right">Chin Base</div>
+            </div>
+          </div>
+
+          <!-- Slot 2: Profile Angle -->
+          <div class="relative bg-slate-900 rounded-xl overflow-hidden border border-slate-800 aspect-[3/4] group">
+            <div class="absolute top-2 left-2 z-20 bg-slate-950/80 px-2 py-0.5 rounded text-[10px] font-mono-code text-rose-400">
+              02 // LATERAL PROFILE
+            </div>
+            <img id="studio-slot-profile" src="" class="w-full h-full object-cover object-top" />
+            <div class="studio-overlay-guide absolute inset-0 pointer-events-none flex flex-col justify-between p-2">
+              <div class="border-b border-dashed border-rose-500/40 text-[9px] font-mono-code text-rose-400 text-right">Nasion Axis</div>
+              <div class="border-b border-dashed border-rose-500/40 text-[9px] font-mono-code text-rose-400 text-right">Gonion Jaw (116°)</div>
+            </div>
+          </div>
+
+          <!-- Slot 3: Three-Quarter Pose -->
+          <div class="relative bg-slate-900 rounded-xl overflow-hidden border border-slate-800 aspect-[3/4] group">
+            <div class="absolute top-2 left-2 z-20 bg-slate-950/80 px-2 py-0.5 rounded text-[10px] font-mono-code text-rose-400">
+              03 // 45° EDITORIAL POSE
+            </div>
+            <img id="studio-slot-angle" src="" class="w-full h-full object-cover object-top" />
+          </div>
+
+          <!-- Slot 4: Full-Body Turnaround -->
+          <div class="relative bg-slate-900 rounded-xl overflow-hidden border border-slate-800 aspect-[3/4] group">
+            <div class="absolute top-2 left-2 z-20 bg-slate-950/80 px-2 py-0.5 rounded text-[10px] font-mono-code text-rose-400">
+              04 // FULL STATURE SILHOUETTE
+            </div>
+            <img id="studio-slot-full" src="" class="w-full h-full object-cover object-top" />
+            <!-- Height Plumb Line -->
+            <div class="studio-overlay-guide absolute inset-y-0 left-1/2 w-px border-l border-dashed border-rose-500/60 pointer-events-none"></div>
+          </div>
+
+        </div>
+
+        <!-- Anatomical Blueprint Metadata Specs -->
+        <div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-slate-900/70 rounded-xl border border-slate-800 font-mono-code text-xs">
+          <div>
+            <span class="text-slate-500 block mb-0.5">Bust-Waist-Hips</span>
+            <span id="studio-bwh-val" class="text-white font-bold text-sm">87-58-89 cm</span>
+          </div>
+          <div>
+            <span class="text-slate-500 block mb-0.5">Head Proportion Scale</span>
+            <span id="studio-head-scale-val" class="text-rose-400 font-bold text-sm">8.3 Heads</span>
+          </div>
+          <div>
+            <span class="text-slate-500 block mb-0.5">Leg / Torso Ratio</span>
+            <span id="studio-leg-ratio-val" class="text-amber-400 font-bold text-sm">1:1.64 Golden</span>
+          </div>
+          <div>
+            <span class="text-slate-500 block mb-0.5">Jawline Apex</span>
+            <span id="studio-jaw-val" class="text-white font-bold text-sm">116° Sharp</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 3: SPEC SHEET TABLE -->
+    <section id="spec-sheet-section" class="view-section hidden space-y-4">
+      <div class="glass-panel p-6 rounded-2xl border border-slate-800">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-xl font-bold text-white font-editorial">Verified Physical Measurements Ledger</h2>
+            <p class="text-xs text-slate-400 font-mono-code">Master records with strict stature thresholds (&gt;165 cm)</p>
+          </div>
+          <button onclick="window.print()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs font-mono-code text-slate-200">
+            Print Ledger
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="text-xs uppercase bg-slate-900/80 text-slate-400 border-b border-slate-800 font-mono-code">
+              <tr>
+                <th class="p-4">Card ID</th>
+                <th class="p-4">Talent / Model</th>
+                <th class="p-4">Stature</th>
+                <th class="p-4">B-W-H (Cup)</th>
+                <th class="p-4">Head Ratio</th>
+                <th class="p-4">Leg Ratio</th>
+                <th class="p-4">Aesthetics</th>
+                <th class="p-4 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="spec-table-body" class="divide-y divide-slate-800">
+              <!-- Rendered by app.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: COMP-CARD DETAILED INSPECTOR -->
+  <div id="compcard-modal" class="modal-container hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
+    <div class="relative w-full max-w-4xl bg-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[92vh] overflow-y-auto">
+      
+      <!-- Close Button -->
+      <button data-close-modal class="absolute top-6 right-6 p-2 rounded-full bg-slate-900 text-slate-400 hover:text-white transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Comp-card Header -->
+      <div class="flex flex-col sm:flex-row sm:items-baseline justify-between border-b border-slate-800 pb-4 mb-6">
+        <div>
+          <span id="modal-agency" class="text-xs uppercase tracking-wider text-rose-500 font-mono-code font-bold">Tokyo Runway Lab</span>
+          <div class="flex items-baseline space-x-3">
+            <h2 id="modal-name" class="text-3xl font-black text-white font-editorial tracking-tight">Rin Hoshizaki</h2>
+            <span id="modal-native-name" class="text-lg text-slate-400">星崎 凛</span>
+          </div>
+        </div>
+        <div class="mt-2 sm:mt-0 font-mono-code text-xs text-slate-500">
+          ID: <span id="modal-id" class="text-rose-400 font-bold">TC-101</span>
+        </div>
+      </div>
+
+      <!-- 4-Image Grid Comp-Card Layout -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <div class="aspect-[3/4] rounded-xl overflow-hidden bg-slate-900 border border-slate-800">
+          <img id="modal-img-primary" src="" class="w-full h-full object-cover object-top" />
+        </div>
+        <div class="aspect-[3/4] rounded-xl overflow-hidden bg-slate-900 border border-slate-800">
+          <img id="modal-img-profile" src="" class="w-full h-full object-cover object-top" />
+        </div>
+        <div class="aspect-[3/4] rounded-xl overflow-hidden bg-slate-900 border border-slate-800">
+          <img id="modal-img-full" src="" class="w-full h-full object-cover object-top" />
+        </div>
+        <div class="aspect-[3/4] rounded-xl overflow-hidden bg-slate-900 border border-slate-800">
+          <img id="modal-img-editorial" src="" class="w-full h-full object-cover object-top" />
+        </div>
+      </div>
+
+      <!-- Verified Physical Metrics Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 p-4 bg-slate-900/60 rounded-2xl border border-slate-800/80 mb-6 font-mono-code text-center">
+        <div>
+          <span class="text-[10px] uppercase text-slate-500 block">Height</span>
+          <span id="modal-spec-height" class="text-base font-bold text-rose-400">174 cm</span>
+        </div>
+        <div>
+          <span class="text-[10px] uppercase text-slate-500 block">B-W-H</span>
+          <span id="modal-spec-bwh" class="text-base font-bold text-white">87-58-89</span>
+        </div>
+        <div>
+          <span class="text-[10px] uppercase text-slate-500 block">Cup</span>
+          <span id="modal-spec-cup" class="text-base font-bold text-white">E Cup</span>
+        </div>
+        <div>
+          <span class="text-[10px] uppercase text-slate-500 block">Shoes</span>
+          <span id="modal-spec-shoes" class="text-base font-bold text-white">24.5 cm</span>
+        </div>
+        <div>
+          <span class="text-[10px] uppercase text-slate-500 block">Head Ratio</span>
+          <span id="modal-spec-proportion" class="text-base font-bold text-amber-400">8.3 Heads</span>
+        </div>
+        <div>
+          <span class="text-[10px] uppercase text-slate-500 block">Leg Ratio</span>
+          <span id="modal-spec-ratio" class="text-base font-bold text-white">1:1.64</span>
+        </div>
+      </div>
+
+      <!-- Craniofacial Analysis Card -->
+      <div class="p-5 rounded-2xl bg-slate-900/40 border border-slate-800 space-y-3 mb-6">
+        <h4 class="text-xs font-mono-code uppercase tracking-wider text-rose-400 font-bold flex items-center space-x-2">
+          <i data-lucide="scan-line" class="w-4 h-4"></i>
+          <span>Craniofacial Symmetry & Blueprint</span>
+        </h4>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono-code">
+          <div class="p-2.5 rounded-lg bg-slate-950/60 border border-slate-800">
+            <span class="text-slate-500 block">Face Shape</span>
+            <span id="modal-cf-faceshape" class="text-slate-200 font-semibold">Sculpted Oval</span>
+          </div>
+          <div class="p-2.5 rounded-lg bg-slate-950/60 border border-slate-800">
+            <span class="text-slate-500 block">Jawline Angle</span>
+            <span id="modal-cf-jawline" class="text-slate-200 font-semibold">116° Sharp</span>
+          </div>
+          <div class="p-2.5 rounded-lg bg-slate-950/60 border border-slate-800">
+            <span class="text-slate-500 block">Cheekbone Index</span>
+            <span id="modal-cf-cheekbone" class="text-slate-200 font-semibold">0.88 High</span>
+          </div>
+          <div class="p-2.5 rounded-lg bg-slate-950/60 border border-slate-800">
+            <span class="text-slate-500 block">Canthal Tilt</span>
+            <span id="modal-cf-eye" class="text-slate-200 font-semibold">+4.5° Positive</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bio / Note -->
+      <p id="modal-bio" class="text-sm text-slate-400 leading-relaxed mb-6 font-sans"></p>
+
+      <!-- Action Footer -->
+      <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-800">
+        <button 
+          onclick="window.print()"
+          class="px-4 py-2 text-xs font-bold rounded-xl bg-slate-800 hover:bg-slate-700 text-white flex items-center space-x-2 transition"
+        >
+          <i data-lucide="printer" class="w-4 h-4"></i>
+          <span>Print Comp-Card</span>
+        </button>
+        <button 
+          data-close-modal
+          class="px-5 py-2 text-xs font-bold rounded-xl bg-rose-600 hover:bg-rose-500 text-white transition"
+        >
+          Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: ADD TALENT ENTRY -->
+  <div id="add-talent-modal" class="modal-container hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
+    <div class="relative w-full max-w-xl bg-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+      
+      <!-- Close Button -->
+      <button data-close-modal class="absolute top-6 right-6 p-2 rounded-full bg-slate-900 text-slate-400 hover:text-white transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <h3 class="text-xl font-extrabold text-white font-editorial mb-1">Add Talent / Model Comp-Card</h3>
+      <p class="text-xs text-slate-400 font-mono-code mb-6">Register verified measurements and visual plate references</p>
+
+      <form id="new-talent-form" class="space-y-4">
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-mono-code text-slate-400 mb-1">Romaji / English Name</label>
+            <input name="name" required placeholder="e.g. Rin Hoshizaki" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-rose-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-mono-code text-slate-400 mb-1">Native Kanji Name</label>
+            <input name="nativeName" required placeholder="e.g. 星崎 凛" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-rose-500" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-mono-code text-slate-400 mb-1">Agency / Representation</label>
+            <input name="agency" required placeholder="e.g. Tokyo Runway Lab" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-rose-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-mono-code text-slate-400 mb-1">Stature (cm) [>165 cm]</label>
+            <input name="stature" type="number" min="165" max="195" required value="172" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-rose-500" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-4 gap-3">
+          <div>
+            <label class="block text-[11px] font-mono-code text-slate-400 mb-1">Bust (cm)</label>
+            <input name="bust" type="number" value="86" class="w-full px-2 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white text-center" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-mono-code text-slate-400 mb-1">Waist (cm)</label>
+            <input name="waist" type="number" value="58" class="w-full px-2 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white text-center" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-mono-code text-slate-400 mb-1">Hips (cm)</label>
+            <input name="hips" type="number" value="88" class="w-full px-2 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white text-center" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-mono-code text-slate-400 mb-1">Cup</label>
+            <input name="cupSize" value="D" class="w-full px-2 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white text-center" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-mono-code text-slate-400 mb-1">Aesthetic Tags (comma separated)</label>
+          <input name="aesthetics" value="Avant-Garde, Runway Tall, Cyberpunk Chic" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-rose-500" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-mono-code text-slate-400 mb-1">Primary Headshot Image URL</label>
+          <input name="imgPrimary" placeholder="https://..." value="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=80" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-rose-500 font-mono-code text-xs" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-mono-code text-slate-400 mb-1">Full-Body Silhouette URL</label>
+          <input name="imgFull" placeholder="https://..." value="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=900&q=80" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-rose-500 font-mono-code text-xs" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-mono-code text-slate-400 mb-1">Editorial Bio Note</label>
+          <textarea name="bio" rows="2" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-rose-500">Editorial runway talent specializing in high-contrast couture presentations.</textarea>
+        </div>
+
+        <div class="flex items-center justify-end space-x-3 pt-3">
+          <button type="button" data-close-modal class="px-4 py-2 text-xs font-bold rounded-xl bg-slate-800 text-slate-300">Cancel</button>
+          <button type="submit" class="px-5 py-2 text-xs font-bold rounded-xl bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-950/50">Save Comp-Card</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="mt-auto border-t border-slate-800/80 bg-slate-950 py-8 no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 font-mono-code gap-4">
+      <div>
+        <span>ATELIER PROPORTION</span> · High-Fashion Editorial Archive & Blueprint System
+      </div>
+      <div>
+        Ready for GitHub Pages · Zero Build Step
+      </div>
+    </div>
+  </footer>
+
+  <!-- Main JavaScript File -->
+  <script src="app.js"></script>
+</body>
+</html>
