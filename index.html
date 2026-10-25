@@ -440,20 +440,38 @@
       <p id="modal-bio" class="text-sm text-slate-400 leading-relaxed mb-6 font-sans"></p>
 
       <!-- Action Footer -->
-      <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-800">
-        <button 
-          onclick="window.print()"
-          class="px-4 py-2 text-xs font-bold rounded-xl bg-slate-800 hover:bg-slate-700 text-white flex items-center space-x-2 transition"
-        >
-          <i data-lucide="printer" class="w-4 h-4"></i>
-          <span>Print Comp-Card</span>
-        </button>
-        <button 
-          data-close-modal
-          class="px-5 py-2 text-xs font-bold rounded-xl bg-rose-600 hover:bg-rose-500 text-white transition"
-        >
-          Close
-        </button>
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-800">
+        <div>
+          <button 
+            onclick="window.app.deleteTalent(window.app.activeTalent.id)"
+            class="px-3 py-2 text-xs font-semibold rounded-xl bg-slate-900 hover:bg-red-950 text-red-400 border border-slate-800 hover:border-red-800 flex items-center space-x-1.5 transition"
+          >
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            <span>Delete</span>
+          </button>
+        </div>
+        <div class="flex items-center space-x-3">
+          <button 
+            onclick="window.app.openEditModal(window.app.activeTalent.id)"
+            class="px-4 py-2 text-xs font-bold rounded-xl bg-amber-600 hover:bg-amber-500 text-white flex items-center space-x-2 transition shadow-lg shadow-amber-950/40"
+          >
+            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+            <span>Edit Profile &amp; Images</span>
+          </button>
+          <button 
+            onclick="window.print()"
+            class="px-4 py-2 text-xs font-bold rounded-xl bg-slate-800 hover:bg-slate-700 text-white flex items-center space-x-2 transition"
+          >
+            <i data-lucide="printer" class="w-4 h-4"></i>
+            <span>Print Comp-Card</span>
+          </button>
+          <button 
+            data-close-modal
+            class="px-5 py-2 text-xs font-bold rounded-xl bg-slate-800 hover:bg-slate-700 text-white transition"
+          >
+            Close
+          </button>
+        </div>
       </div>
 
     </div>
@@ -543,14 +561,160 @@
     </div>
   </div>
 
+  <!-- MODAL: EDIT TALENT ENTRY & REFERENCE IMAGES -->
+  <div id="edit-talent-modal" class="modal-container hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
+    <div class="relative w-full max-w-2xl bg-slate-950 border border-amber-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[92vh] overflow-y-auto">
+      
+      <!-- Close Button -->
+      <button data-close-modal class="absolute top-6 right-6 p-2 rounded-full bg-slate-900 text-slate-400 hover:text-white transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center space-x-2 text-amber-500 text-xs font-mono-code font-bold uppercase tracking-wider mb-1">
+        <i data-lucide="pencil" class="w-4 h-4"></i>
+        <span>Modify Profile Data &amp; Reference Assets</span>
+      </div>
+      <h3 id="edit-title-name" class="text-2xl font-extrabold text-white font-editorial mb-1">Edit Talent Profile</h3>
+      <p class="text-xs text-slate-400 font-mono-code mb-6">Replace image URLs, adjust measurements, or update aesthetics</p>
+
+      <form id="edit-talent-form" class="space-y-5">
+        <input type="hidden" id="edit-id" name="id" />
+
+        <!-- Reference Image URLs / Local Paths -->
+        <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
+          <h4 class="text-xs font-mono-code uppercase text-rose-400 font-bold flex items-center space-x-1.5">
+            <i data-lucide="image" class="w-3.5 h-3.5"></i>
+            <span>Reference Photos (URLs or Local Paths e.g. images/photo.jpg)</span>
+          </h4>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div>
+              <label class="block font-mono-code text-slate-400 mb-1">1. Primary Headshot</label>
+              <input id="edit-imgPrimary" name="imgPrimary" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 font-mono-code" />
+            </div>
+            <div>
+              <label class="block font-mono-code text-slate-400 mb-1">2. Lateral Profile (90°)</label>
+              <input id="edit-imgProfile" name="imgProfile" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 font-mono-code" />
+            </div>
+            <div>
+              <label class="block font-mono-code text-slate-400 mb-1">3. Full-Body Silhouette</label>
+              <input id="edit-imgFull" name="imgFull" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 font-mono-code" />
+            </div>
+            <div>
+              <label class="block font-mono-code text-slate-400 mb-1">4. Editorial / 45° Pose</label>
+              <input id="edit-imgEditorial" name="imgEditorial" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 font-mono-code" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Identity -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs font-mono-code text-slate-400 mb-1">Romaji Name</label>
+            <input id="edit-name" name="name" required class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-amber-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-mono-code text-slate-400 mb-1">Native Kanji</label>
+            <input id="edit-nativeName" name="nativeName" required class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-amber-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-mono-code text-slate-400 mb-1">Agency</label>
+            <input id="edit-agency" name="agency" required class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-amber-500" />
+          </div>
+        </div>
+
+        <!-- Metrics -->
+        <div class="grid grid-cols-2 sm:grid-cols-6 gap-3">
+          <div>
+            <label class="block text-[11px] font-mono-code text-slate-400 mb-1">Height (cm)</label>
+            <input id="edit-stature" name="stature" type="number" min="165" max="195" required class="w-full px-2 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white text-center" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-mono-code text-slate-400 mb-1">Bust (cm)</label>
+            <input id="edit-bust" name="bust" type="number" required class="w-full px-2 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white text-center" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-mono-code text-slate-400 mb-1">Waist (cm)</label>
+            <input id="edit-waist" name="waist" type="number" required class="w-full px-2 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white text-center" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-mono-code text-slate-400 mb-1">Hips (cm)</label>
+            <input id="edit-hips" name="hips" type="number" required class="w-full px-2 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white text-center" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-mono-code text-slate-400 mb-1">Cup</label>
+            <input id="edit-cupSize" name="cupSize" required class="w-full px-2 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white text-center" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-mono-code text-slate-400 mb-1">Shoes (cm)</label>
+            <input id="edit-shoes" name="shoes" step="0.5" required class="w-full px-2 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white text-center" />
+          </div>
+        </div>
+
+        <!-- Craniofacial & Aesthetics -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-mono-code text-slate-400 mb-1">Aesthetic Tags (comma separated)</label>
+            <input id="edit-aesthetics" name="aesthetics" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-amber-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-mono-code text-slate-400 mb-1">Face Shape Blueprint</label>
+            <input id="edit-cf-faceshape" name="cfFaceShape" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-amber-500" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block text-[11px] font-mono-code text-slate-400 mb-1">Jawline Angle</label>
+            <input id="edit-cf-jawline" name="cfJawline" class="w-full px-2 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-mono-code text-slate-400 mb-1">Cheekbone Index</label>
+            <input id="edit-cf-cheekbone" name="cfCheekbone" class="w-full px-2 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-mono-code text-slate-400 mb-1">Canthal Tilt</label>
+            <input id="edit-cf-eye" name="cfEye" class="w-full px-2 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-mono-code text-slate-400 mb-1">Bio / Editorial Note</label>
+          <textarea id="edit-bio" name="bio" rows="2" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-amber-500"></textarea>
+        </div>
+
+        <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+          <button 
+            type="button" 
+            onclick="window.app.deleteTalent(document.getElementById('edit-id').value)"
+            class="px-3 py-2 text-xs font-bold rounded-xl text-red-400 hover:bg-red-950/50 transition"
+          >
+            Delete Profile
+          </button>
+          <div class="flex items-center space-x-3">
+            <button type="button" data-close-modal class="px-4 py-2 text-xs font-bold rounded-xl bg-slate-800 text-slate-300">Cancel</button>
+            <button type="submit" class="px-5 py-2 text-xs font-bold rounded-xl bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-950/50">Save Changes</button>
+          </div>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
   <!-- FOOTER -->
   <footer class="mt-auto border-t border-slate-800/80 bg-slate-950 py-8 no-print">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 font-mono-code gap-4">
       <div>
-        <span>ATELIER PROPORTION</span> · High-Fashion Editorial Archive & Blueprint System
+        <span>ATELIER PROPORTION</span> · High-Fashion Editorial Archive &amp; Blueprint System
       </div>
-      <div>
-        Ready for GitHub Pages · Zero Build Step
+      <div class="flex items-center space-x-4">
+        <button 
+          onclick="window.app.resetAllToOriginalDefaults()" 
+          class="text-slate-500 hover:text-slate-300 underline transition"
+        >
+          Reset to Factory Defaults
+        </button>
+        <span>Ready for GitHub Pages</span>
       </div>
     </div>
   </footer>

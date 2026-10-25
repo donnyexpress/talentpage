@@ -320,6 +320,15 @@ class CompCardApp {
         this.handleCreateTalent(new FormData(addTalentForm));
       });
     }
+
+    // Edit Talent Form Submit
+    const editTalentForm = document.getElementById("edit-talent-form");
+    if (editTalentForm) {
+      editTalentForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        this.handleUpdateTalent(new FormData(editTalentForm));
+      });
+    }
   }
 
   switchView(viewName) {
@@ -461,20 +470,28 @@ class CompCardApp {
             </div>
 
             <!-- Action Buttons -->
-            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/80">
+            <div class="grid grid-cols-3 gap-1.5 pt-2 border-t border-slate-800/80">
               <button 
                 onclick="window.app.openCompCardModal('${item.id}')"
-                class="px-3 py-2 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center space-x-1 transition"
+                class="px-2 py-2 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center space-x-1 transition"
               >
                 <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-                <span>Comp-Card</span>
+                <span>View</span>
               </button>
               <button 
                 onclick="window.app.sendToStudio('${item.id}')"
-                class="px-3 py-2 text-xs font-semibold rounded-lg bg-rose-600/90 hover:bg-rose-600 text-white flex items-center justify-center space-x-1 transition shadow-lg shadow-rose-950/40"
+                class="px-2 py-2 text-xs font-semibold rounded-lg bg-rose-600/90 hover:bg-rose-600 text-white flex items-center justify-center space-x-1 transition shadow-lg shadow-rose-950/40"
               >
                 <i data-lucide="scan" class="w-3.5 h-3.5"></i>
                 <span>Blueprint</span>
+              </button>
+              <button 
+                onclick="window.app.openEditModal('${item.id}')"
+                class="px-2 py-2 text-xs font-semibold rounded-lg bg-slate-850 hover:bg-amber-600 text-slate-300 hover:text-white border border-slate-800 flex items-center justify-center space-x-1 transition"
+                title="Edit Reference Images & Data"
+              >
+                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                <span>Edit</span>
               </button>
             </div>
           </div>
@@ -592,6 +609,117 @@ class CompCardApp {
       `
       )
       .join("");
+  }
+
+  openEditModal(talentId) {
+    const talent = this.talents.find((t) => t.id === talentId);
+    if (!talent) return;
+
+    // Close comp-card view modal if open
+    document.getElementById("compcard-modal")?.classList.add("hidden");
+
+    const modal = document.getElementById("edit-talent-modal");
+    if (!modal) return;
+
+    document.getElementById("edit-id").value = talent.id;
+    document.getElementById("edit-title-name").textContent = `Editing: ${talent.name} (${talent.id})`;
+    document.getElementById("edit-name").value = talent.name;
+    document.getElementById("edit-nativeName").value = talent.nativeName;
+    document.getElementById("edit-agency").value = talent.agency;
+    document.getElementById("edit-stature").value = talent.stature;
+    document.getElementById("edit-bust").value = talent.bust;
+    document.getElementById("edit-waist").value = talent.waist;
+    document.getElementById("edit-hips").value = talent.hips;
+    document.getElementById("edit-cupSize").value = talent.cupSize;
+    document.getElementById("edit-shoes").value = talent.shoes;
+    document.getElementById("edit-aesthetics").value = talent.aesthetics.join(", ");
+    document.getElementById("edit-bio").value = talent.bio;
+
+    // Image URLs / local paths
+    document.getElementById("edit-imgPrimary").value = talent.images.primary || "";
+    document.getElementById("edit-imgProfile").value = talent.images.profile || "";
+    document.getElementById("edit-imgFull").value = talent.images.fullBody || "";
+    document.getElementById("edit-imgEditorial").value = talent.images.editorial || "";
+
+    // Craniofacial specs
+    document.getElementById("edit-cf-faceshape").value = talent.craniofacial?.faceShape || "Sculpted Oval";
+    document.getElementById("edit-cf-jawline").value = talent.craniofacial?.jawlineAngle || "116° Sharp";
+    document.getElementById("edit-cf-cheekbone").value = talent.craniofacial?.cheekboneIndex || "0.88 High";
+    document.getElementById("edit-cf-eye").value = talent.craniofacial?.canthalTilt || "+4.5° Positive";
+
+    modal.classList.remove("hidden");
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  handleUpdateTalent(formData) {
+    const talentId = formData.get("id");
+    const talent = this.talents.find((t) => t.id === talentId);
+    if (!talent) return;
+
+    const stature = parseInt(formData.get("stature"), 10) || talent.stature;
+    talent.name = formData.get("name") || talent.name;
+    talent.nativeName = formData.get("nativeName") || talent.nativeName;
+    talent.agency = formData.get("agency") || talent.agency;
+    talent.stature = stature;
+    talent.bust = parseInt(formData.get("bust"), 10) || talent.bust;
+    talent.waist = parseInt(formData.get("waist"), 10) || talent.waist;
+    talent.hips = parseInt(formData.get("hips"), 10) || talent.hips;
+    talent.cupSize = formData.get("cupSize") || talent.cupSize;
+    talent.shoes = parseFloat(formData.get("shoes")) || talent.shoes;
+    talent.headProportion = parseFloat((stature / 21.2).toFixed(1));
+    talent.aesthetics = formData.get("aesthetics") ? formData.get("aesthetics").split(",").map(s => s.trim()) : talent.aesthetics;
+    talent.bio = formData.get("bio") || talent.bio;
+
+    talent.images = {
+      primary: formData.get("imgPrimary") || talent.images.primary,
+      profile: formData.get("imgProfile") || talent.images.profile,
+      fullBody: formData.get("imgFull") || talent.images.fullBody,
+      editorial: formData.get("imgEditorial") || talent.images.editorial
+    };
+
+    talent.craniofacial = {
+      faceShape: formData.get("cfFaceShape") || talent.craniofacial.faceShape,
+      jawlineAngle: formData.get("cfJawline") || talent.craniofacial.jawlineAngle,
+      cheekboneIndex: formData.get("cfCheekbone") || talent.craniofacial.cheekboneIndex,
+      intercanthalRatio: talent.craniofacial.intercanthalRatio || "1:1.01",
+      canthalTilt: formData.get("cfEye") || talent.craniofacial.canthalTilt
+    };
+
+    this.saveTalents();
+    this.updateStats();
+    this.renderCatalog();
+    if (this.activeTalent && this.activeTalent.id === talentId) {
+      this.activeTalent = talent;
+      this.studioSlotImages = {
+        front: talent.images.primary,
+        profile: talent.images.profile,
+        angle: talent.images.editorial,
+        full: talent.images.fullBody
+      };
+    }
+
+    document.getElementById("edit-talent-modal").classList.add("hidden");
+    alert(`Updated ${talent.name}'s profile and images successfully!`);
+  }
+
+  deleteTalent(talentId) {
+    if (!confirm("Are you sure you want to delete this comp-card profile?")) return;
+    this.talents = this.talents.filter(t => t.id !== talentId);
+    this.saveTalents();
+    this.updateStats();
+    this.renderCatalog();
+    document.getElementById("compcard-modal")?.classList.add("hidden");
+    document.getElementById("edit-talent-modal")?.classList.add("hidden");
+  }
+
+  resetAllToOriginalDefaults() {
+    if (!confirm("Reset all profiles to initial default dataset? Any manual edits will be reverted.")) return;
+    localStorage.removeItem(this.storageKey);
+    this.talents = [...INITIAL_TALENT_DATA];
+    this.saveTalents();
+    this.updateStats();
+    this.renderCatalog();
+    alert("Reset back to default template dataset.");
   }
 
   handleCreateTalent(formData) {
